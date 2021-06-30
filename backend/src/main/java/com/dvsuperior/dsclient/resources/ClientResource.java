@@ -1,14 +1,19 @@
 package com.dvsuperior.dsclient.resources;
 
+import java.net.URI;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.dvsuperior.dsclient.entities.Client;
+import com.dvsuperior.dsclient.DTO.ClientDTO;
 import com.dvsuperior.dsclient.services.clientService;
 
 @RestController
@@ -19,8 +24,22 @@ public class ClientResource {
 	private clientService clientservice;
 	
 	@GetMapping
-	public ResponseEntity<List<Client>> findAll(){
-		List<Client> list = clientservice.findAll();
+	public ResponseEntity<List<ClientDTO>> findAll(){
+		List<ClientDTO> list = clientservice.findAll();
 		return ResponseEntity.ok().body(list);
+	}
+	
+	@GetMapping(value = "/{id}")
+	public ResponseEntity<ClientDTO> findById(@PathVariable Long id){
+		ClientDTO dto = clientservice.findById(id);
+		return ResponseEntity.ok().body(dto);
+	}
+	
+	@PostMapping
+	public ResponseEntity<ClientDTO> insert(@RequestBody ClientDTO dto){
+		dto = clientservice.insert(dto);
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(dto.getId()).toUri();
+		return ResponseEntity.created(uri).body(dto);
+				
 	}
 }
