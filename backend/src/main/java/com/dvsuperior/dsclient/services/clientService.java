@@ -9,6 +9,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.dvsuperior.dsclient.DTO.ClientDTO;
@@ -24,15 +25,15 @@ public class clientService {
 	private clientRepository clientrepository;
 
 	@Transactional(readOnly = true)
-	public Page<ClientDTO> findAllPaged(PageRequest pageRequest) {
-		Page<Client> list = clientrepository.findAll(pageRequest);
+	public Page<ClientDTO> findAllPaged(Pageable pageable) {
+	Page<Client> list = clientrepository.findAll(pageable);
 		return list.map(x -> new ClientDTO(x));
 	}
 
 	@Transactional(readOnly = true)
 	public ClientDTO findById(Long id) {
-		Optional<Client> obj = clientrepository.findById(id);
-		Client entity = obj.orElseThrow(() -> new ResourceNotFoundException("Entity not found"));
+	Optional<Client> obj = clientrepository.findById(id);
+	Client entity = obj.orElseThrow(() -> new ResourceNotFoundException("Entity not found"));
 		return new ClientDTO(entity);
 	}
 
